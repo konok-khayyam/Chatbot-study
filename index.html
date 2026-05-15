@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Study</title>
+</head>
+
+<body>
+
+<h1>Chatbot Test Page</h1>
+
+<script type="module">
+  import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
+
+  Chatbot.init({
+    n8nChatUrl: "https://example.com",
+
+    metadata: {},
+
+    theme: {
+      button: {
+        backgroundColor: "#ffb59e",
+        right: 20,
+        bottom: 20,
+        size: 50
+      },
+
+      chatWindow: {
+        welcomeMessage: "Hello! Chatbot loaded successfully.",
+        height: 600,
+        width: 400
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
