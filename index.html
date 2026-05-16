@@ -12,28 +12,66 @@
 <h1>Chatbot Test Page</h1>
 
 <script type="module">
-  import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
 
-  Chatbot.init({
-    n8nChatUrl: "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
+import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
 
-    metadata: {},
+// =========================
+// SESSION ID
+// =========================
 
-    theme: {
-      button: {
-        backgroundColor: "#ffb59e",
-        right: 20,
-        bottom: 20,
-        size: 50
-      },
+let sessionId = localStorage.getItem("sessionId");
 
-      chatWindow: {
-        welcomeMessage: "Hello! Chatbot loaded successfully.",
-        height: 600,
-        width: 400
-      }
+if (!sessionId) {
+  sessionId = crypto.randomUUID();
+  localStorage.setItem("sessionId", sessionId);
+}
+
+// =========================
+// CONDITION
+// =========================
+
+let condition = localStorage.getItem("condition");
+
+if (!condition) {
+  condition = Math.floor(Math.random() * 4) + 1;
+  localStorage.setItem("condition", condition);
+}
+
+console.log("Session ID:", sessionId);
+console.log("Condition:", condition);
+
+// =========================
+// CHATBOT
+// =========================
+
+Chatbot.init({
+
+  n8nChatUrl: "PASTE_YOUR_WEBHOOK_URL_HERE",
+
+  metadata: {
+    sessionId: sessionId,
+    condition: condition
+  },
+
+  theme: {
+
+    button: {
+      backgroundColor: "#ffb59e",
+      right: 20,
+      bottom: 20,
+      size: 50
+    },
+
+    chatWindow: {
+      welcomeMessage: "Hello! Chatbot loaded successfully.",
+      height: 600,
+      width: 400
     }
-  });
+
+  }
+
+});
+
 </script>
 
 </body>
