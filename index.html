@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Chatbot Study</title>
 
   <style>
@@ -11,297 +12,256 @@
     body {
       margin: 0;
       padding: 0;
-      background: #F9FAFB;
+      background: #F6F6F8;
       font-family: Arial, sans-serif;
+      overflow: hidden;
     }
 
-    h1 {
-      text-align: center;
-      margin-top: 40px;
-      color: #2F4156;
-      font-size: 32px;
-      font-weight: 600;
-    }
-
-    /* ========================================
+    /* =========================
        TIMER
-    ======================================== */
+    ========================== */
 
-    #study-timer {
+    #timer-box {
       position: fixed;
       top: 18px;
-      right: 24px;
-      z-index: 9999;
+      left: 22px;
 
-      background: #E5E7EB;
-      color: #374151;
+      background: #E7E7EA;
+      color: #3B455A;
 
       padding: 10px 18px;
-      border-radius: 10px;
+
+      border-radius: 18px;
 
       font-size: 18px;
       font-weight: 600;
 
+      z-index: 9999;
+
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    /* ========================================
-       END OVERLAY
-    ======================================== */
-
-    #end-overlay {
-
-      display: none;
-
-      position: fixed;
-      top: 0;
-      left: 0;
-
-      width: 100%;
-      height: 100%;
-
-      background: rgba(0,0,0,0.55);
-
-      z-index: 10000;
-
-      justify-content: center;
-      align-items: center;
-
-    }
-
-    #end-box {
-
-      background: white;
-
-      width: 420px;
-
-      padding: 40px;
-
-      border-radius: 18px;
-
-      text-align: center;
-
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-
-    }
-
-    #end-box h2 {
-
-      margin-top: 0;
-      color: #2F4156;
-
-    }
-
-    #end-box p {
-
-      color: #374151;
-      line-height: 1.6;
-
-    }
-
   </style>
-
 </head>
 
 <body>
 
-<h1>Conversation Study</h1>
+  <!-- =========================
+       TIMER DISPLAY
+  ========================== -->
 
-<!-- ========================================
-     TIMER
-======================================== -->
-
-<div id="study-timer">
-  00:30
-</div>
-
-<!-- ========================================
-     END SCREEN
-======================================== -->
-
-<div id="end-overlay">
-
-  <div id="end-box">
-
-    <h2>Conversation Completed</h2>
-
-    <p>
-      Thank you for participating in this study.
-      <br><br>
-      You will now return to the survey page.
-      <br><br>
-      After returning, please click the
-      <strong>Next</strong> button to continue.
-    </p>
-
+  <div id="timer-box">
+    00:30
   </div>
 
-</div>
+  <!-- =========================
+       CHATBOT
+  ========================== -->
 
-<script type="module">
+  <script type="module">
 
-import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
+    import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
 
-// ========================================
-// SESSION ID
-// ========================================
+    // =========================
+    // SESSION ID
+    // =========================
 
-let sessionId = localStorage.getItem("sessionId");
+    let sessionId = localStorage.getItem("sessionId");
 
-if (!sessionId) {
-
-  sessionId = crypto.randomUUID();
-
-  localStorage.setItem("sessionId", sessionId);
-
-}
-
-// ========================================
-// RANDOM CONDITION
-// ========================================
-
-let condition = localStorage.getItem("condition");
-
-if (!condition) {
-
-  condition = Math.floor(Math.random() * 4) + 1;
-
-  localStorage.setItem("condition", condition);
-
-}
-
-console.log("Session ID:", sessionId);
-console.log("Condition:", condition);
-
-// ========================================
-// CHATBOT
-// ========================================
-
-Chatbot.init({
-
-  n8nChatUrl:
-    "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
-
-  metadata: {
-
-    sessionId: sessionId,
-    condition: condition
-
-  },
-
-  theme: {
-
-    button: {
-
-      backgroundColor: "#2F4156",
-
-      right: 20,
-      bottom: 20,
-
-      size: 55
-
-    },
-
-    chatWindow: {
-
-      welcomeMessage:
-        "Hello. Thank you for participating in this study. You may begin the conversation whenever you are ready.",
-
-      height: 650,
-      width: 1200
-
-    },
-
-    userMessage: {
-
-      backgroundColor: "#BFD7EA",
-      textColor: "#1F2937"
-
-    },
-
-    botMessage: {
-
-      backgroundColor: "#DCE6F2",
-      textColor: "#1F2937"
-
-    },
-
-    sendButton: {
-
-      backgroundColor: "#2F4156"
-
-    },
-
-    input: {
-
-      placeholder: "Type your message..."
-
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem("sessionId", sessionId);
     }
 
-  }
+    // =========================
+    // CONDITION
+    // =========================
 
-});
+    let condition = localStorage.getItem("condition");
 
-// ========================================
-// AUTO OPEN CHAT AFTER 1 SECOND
-// ========================================
+    if (!condition) {
+      condition = Math.floor(Math.random() * 4) + 1;
+      localStorage.setItem("condition", condition);
+    }
 
-setTimeout(() => {
+    console.log("Session ID:", sessionId);
+    console.log("Condition:", condition);
 
-  const chatButton = document.querySelector("button");
+    // =========================
+    // SAVE CURRENT SURVEY PAGE
+    // =========================
 
-  if (chatButton) {
+    if (document.referrer.includes("survey.media.tuwien.ac.at")) {
+      localStorage.setItem("surveyReturnUrl", document.referrer);
+    }
 
-    chatButton.click();
+    // =========================
+    // INITIALIZE CHATBOT
+    // =========================
 
-  }
+    Chatbot.init({
 
-}, 1000);
+      n8nChatUrl:
+        "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
 
-// ========================================
-// TIMER
-// ========================================
+      metadata: {
+        sessionId: sessionId,
+        condition: condition
+      },
 
-let totalSeconds = 30;
+      theme: {
 
-const timerDisplay = document.getElementById("study-timer");
+        button: {
 
-const timerInterval = setInterval(() => {
+          backgroundColor: "#3B455A",
 
-  totalSeconds--;
+          iconColor: "#FFFFFF",
 
-  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+          size: 70,
 
-  const seconds = String(totalSeconds % 60).padStart(2, '0');
+          right: 20,
+          bottom: 20
 
-  timerDisplay.innerText = `${minutes}:${seconds}`;
+        },
 
-  // ========================================
-  // TIMER END
-  // ========================================
+        chatWindow: {
 
-  if (totalSeconds <= 0) {
+          welcomeMessage:
+            "Hello! Thank you for participating in this study.",
 
-    clearInterval(timerInterval);
+          width: 1100,
 
-    // SHOW OVERLAY
+          height: 680,
 
-    document.getElementById("end-overlay").style.display = "flex";
+          backgroundColor: "#FFFFFF",
 
-    // REDIRECT AFTER 4 SECONDS
+          textColor: "#2F3440",
+
+          borderRadiusStyle: "rounded",
+
+          showTitle: false,
+
+          showAgentMessages: true,
+
+          placeholder: "Type your message...",
+
+          starterPrompts: [],
+
+          clearChatOnReload: false,
+
+          botMessage: {
+            backgroundColor: "#ECEAF4",
+            textColor: "#2F3440"
+          },
+
+          userMessage: {
+            backgroundColor: "#D8C3B5",
+            textColor: "#2F3440"
+          }
+
+        }
+
+      }
+
+    });
+
+    // =========================
+    // AUTO OPEN CHAT
+    // =========================
 
     setTimeout(() => {
 
-      window.location.href =
-        "https://survey.media.tuwien.ac.at/index.php/718311?lang=en";
+      const chatButton = document.querySelector("button");
 
-    }, 4000);
+      if (chatButton) {
+        chatButton.click();
+      }
 
-  }
+    }, 1000);
 
-}, 1000);
+    // =========================
+    // REMOVE HEADER CONTROLS
+    // =========================
 
-</script>
+    const observer = new MutationObserver(() => {
+
+      // Remove minimize / close feel visually
+
+      const header = document.querySelector('[class*="header"]');
+
+      if (header) {
+
+        header.style.background = "#FFFFFF";
+        header.style.borderBottom = "1px solid #EAEAEA";
+
+      }
+
+      // Main container styling
+
+      const chatWindow = document.querySelector('[class*="chat-window"]');
+
+      if (chatWindow) {
+
+        chatWindow.style.borderRadius = "32px";
+
+        chatWindow.style.boxShadow =
+          "0 8px 30px rgba(0,0,0,0.08)";
+
+      }
+
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    // =========================
+    // TIMER
+    // =========================
+
+    let totalTime = 30;
+
+    const timerDisplay = document.getElementById("timer-box");
+
+    const timer = setInterval(() => {
+
+      totalTime--;
+
+      const minutes = String(
+        Math.floor(totalTime / 60)
+      ).padStart(2, "0");
+
+      const seconds = String(
+        totalTime % 60
+      ).padStart(2, "0");
+
+      timerDisplay.innerText = `${minutes}:${seconds}`;
+
+      // =========================
+      // END SESSION
+      // =========================
+
+      if (totalTime <= 0) {
+
+        clearInterval(timer);
+
+        alert(
+          "The conversation time is complete. Please click NEXT in the survey to continue."
+        );
+
+        const returnUrl =
+          localStorage.getItem("surveyReturnUrl");
+
+        if (returnUrl) {
+          window.location.href = returnUrl;
+        }
+
+      }
+
+    }, 1000);
+
+  </script>
 
 </body>
 
