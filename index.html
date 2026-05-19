@@ -3,35 +3,7 @@
 import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
 
 /* =========================
-   SESSION ID
-========================= */
-
-let sessionId = localStorage.getItem("sessionId");
-
-if (!sessionId) {
-
-  sessionId = crypto.randomUUID();
-
-  localStorage.setItem("sessionId", sessionId);
-
-}
-
-/* =========================
-   CONDITION
-========================= */
-
-let condition = localStorage.getItem("condition");
-
-if (!condition) {
-
-  condition = Math.floor(Math.random() * 4) + 1;
-
-  localStorage.setItem("condition", condition);
-
-}
-
-/* =========================
-   SAVE SURVEY PAGE
+   SAVE LIMESURVEY PAGE
 ========================= */
 
 if (
@@ -53,13 +25,6 @@ Chatbot.init({
 
   n8nChatUrl:
     "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
-
-  metadata: {
-
-    sessionId: sessionId,
-    condition: condition
-
-  },
 
   theme: {
 
@@ -196,17 +161,17 @@ Chatbot.init({
 });
 
 /* =========================
-   FORCE AUTO OPEN
+   FORCE CHAT AUTO OPEN
 ========================= */
 
 window.addEventListener("load", () => {
 
   setTimeout(() => {
 
-    const allButtons =
+    const buttons =
       document.querySelectorAll("button");
 
-    allButtons.forEach(btn => {
+    buttons.forEach(btn => {
 
       const svg = btn.querySelector("svg");
 
@@ -218,161 +183,168 @@ window.addEventListener("load", () => {
 
     });
 
-  }, 1200);
+  }, 1500);
 
 });
 
 /* =========================
-   TIMER INSIDE CHAT
+   TIMER + REDIRECT
 ========================= */
 
-const observer = new MutationObserver(() => {
+window.addEventListener("load", () => {
 
-  const chatWindow =
-    document.querySelector('[class*="chat-window"]');
+  setTimeout(() => {
 
-  if (
-    chatWindow &&
-    !document.getElementById("studyTimer")
-  ) {
+    const interval = setInterval(() => {
 
-    /* TIMER */
+      const chatWindow =
+        document.querySelector(
+          '[class*="chat-window"]'
+        );
 
-    const timer = document.createElement("div");
+      const header =
+        document.querySelector(
+          '[class*="header"]'
+        );
 
-    timer.id = "studyTimer";
+      if (chatWindow && header) {
 
-    timer.innerText = "00:30";
+        clearInterval(interval);
 
-    /* STYLE */
+        /* TIMER */
 
-    timer.style.position = "absolute";
+        const timer =
+          document.createElement("div");
 
-    timer.style.top = "16px";
+        timer.id = "studyTimer";
 
-    timer.style.left = "18px";
+        timer.innerText = "00:30";
 
-    timer.style.background = "#ffffff";
+        /* TIMER STYLE */
 
-    timer.style.border = "1px solid #DADADA";
+        timer.style.position = "absolute";
 
-    timer.style.borderRadius = "16px";
+        timer.style.left = "18px";
 
-    timer.style.padding = "8px 18px";
+        timer.style.top = "16px";
 
-    timer.style.fontSize = "18px";
+        timer.style.background = "#ffffff";
 
-    timer.style.fontWeight = "600";
+        timer.style.borderRadius = "14px";
 
-    timer.style.color = "#3B455A";
+        timer.style.padding =
+          "8px 18px";
 
-    timer.style.zIndex = "99999";
+        timer.style.fontSize =
+          "18px";
 
-    timer.style.boxShadow =
-      "0 2px 6px rgba(0,0,0,0.08)";
+        timer.style.fontWeight =
+          "700";
 
-    chatWindow.style.position = "relative";
+        timer.style.color =
+          "#3B455A";
 
-    chatWindow.appendChild(timer);
+        timer.style.boxShadow =
+          "0 2px 6px rgba(0,0,0,0.08)";
 
-    /* =========================
-       TIMER LOGIC
-    ========================== */
+        timer.style.zIndex =
+          "999999";
 
-    let totalTime = 30;
+        header.style.position =
+          "relative";
 
-    const countdown = setInterval(() => {
+        header.appendChild(timer);
 
-      totalTime--;
+        /* COUNTDOWN */
 
-      const minutes = String(
-        Math.floor(totalTime / 60)
-      ).padStart(2, "0");
+        let totalTime = 30;
 
-      const seconds = String(
-        totalTime % 60
-      ).padStart(2, "0");
+        const countdown =
+          setInterval(() => {
 
-      timer.innerText =
-        `${minutes}:${seconds}`;
+          totalTime--;
 
-      /* =========================
-         END SESSION
-      ========================== */
+          const minutes =
+            String(
+              Math.floor(totalTime / 60)
+            ).padStart(2, "0");
 
-      if (totalTime <= 0) {
+          const seconds =
+            String(
+              totalTime % 60
+            ).padStart(2, "0");
 
-        clearInterval(countdown);
+          timer.innerText =
+            `${minutes}:${seconds}`;
 
-        /* HIDE CHAT */
+          /* END SESSION */
 
-        chatWindow.innerHTML = `
+          if (totalTime <= 0) {
 
-          <div style="
-            height:100%;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            padding:40px;
-            text-align:center;
-            font-family:Arial;
-          ">
+            clearInterval(countdown);
 
-            <h2 style="
-              margin-bottom:20px;
-              color:#3B455A;
-            ">
-              Thank you for the interaction.
-            </h2>
+            chatWindow.innerHTML = `
 
-            <p style="
-              font-size:18px;
-              color:#666;
-              max-width:600px;
-              line-height:1.6;
-            ">
-              We are now redirecting you back to the survey.
-              Please press the NEXT button in LimeSurvey
-              to continue the study.
-            </p>
+              <div style="
+                height:100%;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                align-items:center;
+                text-align:center;
+                padding:40px;
+                font-family:Arial;
+              ">
 
-          </div>
+                <h2 style="
+                  color:#3B455A;
+                  margin-bottom:20px;
+                ">
+                  Thank you for participating.
+                </h2>
 
-        `;
+                <p style="
+                  font-size:18px;
+                  color:#666;
+                  line-height:1.6;
+                  max-width:600px;
+                ">
+                  You are now being redirected
+                  back to the survey.
+                  Please press NEXT to continue.
+                </p>
 
-        /* =========================
-           REDIRECT
-        ========================== */
+              </div>
 
-        setTimeout(() => {
+            `;
 
-          const returnUrl =
-            localStorage.getItem(
-              "surveyReturnUrl"
-            );
+            /* REDIRECT */
 
-          if (returnUrl) {
+            setTimeout(() => {
 
-            window.location.href =
-              returnUrl;
+              const returnUrl =
+                localStorage.getItem(
+                  "surveyReturnUrl"
+                );
+
+              if (returnUrl) {
+
+                window.location.href =
+                  returnUrl;
+
+              }
+
+            }, 3000);
 
           }
 
-        }, 3000);
+        }, 1000);
 
       }
 
-    }, 1000);
+    }, 500);
 
-  }
-
-});
-
-observer.observe(document.body, {
-
-  childList: true,
-  subtree: true
+  }, 2000);
 
 });
 
