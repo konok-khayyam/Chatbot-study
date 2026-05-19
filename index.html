@@ -31,7 +31,7 @@ if (!condition) {
 }
 
 /* =========================
-   SAVE SURVEY PAGE URL
+   SAVE SURVEY PAGE
 ========================= */
 
 if (
@@ -46,57 +46,7 @@ if (
 }
 
 /* =========================
-   TIMER ELEMENT
-========================= */
-
-const timerBox = document.createElement("div");
-
-timerBox.id = "studyTimer";
-
-timerBox.innerText = "00:30";
-
-document.body.appendChild(timerBox);
-
-/* =========================
-   TIMER STYLE
-========================= */
-
-const style = document.createElement("style");
-
-style.innerHTML = `
-
-#studyTimer {
-
-  position: fixed;
-
-  top: 88px;
-  left: 290px;
-
-  z-index: 999999;
-
-  background: #ffffff;
-
-  color: #3B455A;
-
-  padding: 10px 20px;
-
-  border-radius: 16px;
-
-  font-size: 18px;
-  font-weight: 600;
-
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-
-  border: 1px solid #EAEAEA;
-
-}
-
-`;
-
-document.head.appendChild(style);
-
-/* =========================
-   CHATBOT
+   CHATBOT INIT
 ========================= */
 
 Chatbot.init({
@@ -162,11 +112,6 @@ Chatbot.init({
 
       showTitle: false,
 
-      title: "N8N Chat UI Bot",
-
-      titleAvatarSrc:
-        "https://www.svgrepo.com/show/362552/chat-centered-dots-bold.svg",
-
       avatarSize: 40,
 
       welcomeMessage:
@@ -193,9 +138,9 @@ Chatbot.init({
 
       botMessage: {
 
-        backgroundColor: "#ECEAF4",
+        backgroundColor: "#b0b0b0",
 
-        textColor: "#2F3440",
+        textColor: "#fafafa",
 
         showAvatar: true,
 
@@ -251,49 +196,184 @@ Chatbot.init({
 });
 
 /* =========================
-   TIMER LOGIC
+   FORCE AUTO OPEN
 ========================= */
 
-let totalTime = 30;
+window.addEventListener("load", () => {
 
-const timer = setInterval(() => {
+  setTimeout(() => {
 
-  totalTime--;
+    const allButtons =
+      document.querySelectorAll("button");
 
-  const minutes = String(
-    Math.floor(totalTime / 60)
-  ).padStart(2, "0");
+    allButtons.forEach(btn => {
 
-  const seconds = String(
-    totalTime % 60
-  ).padStart(2, "0");
+      const svg = btn.querySelector("svg");
 
-  timerBox.innerText =
-    `${minutes}:${seconds}`;
+      if (svg) {
 
-  /* =========================
-     REDIRECT
-  ========================= */
+        btn.click();
 
-  if (totalTime <= 0) {
+      }
 
-    clearInterval(timer);
+    });
 
-    alert(
-      "Conversation time completed. Please click NEXT in the survey to continue."
-    );
+  }, 1200);
 
-    const returnUrl =
-      localStorage.getItem("surveyReturnUrl");
+});
 
-    if (returnUrl) {
+/* =========================
+   TIMER INSIDE CHAT
+========================= */
 
-      window.location.href = returnUrl;
+const observer = new MutationObserver(() => {
 
-    }
+  const chatWindow =
+    document.querySelector('[class*="chat-window"]');
+
+  if (
+    chatWindow &&
+    !document.getElementById("studyTimer")
+  ) {
+
+    /* TIMER */
+
+    const timer = document.createElement("div");
+
+    timer.id = "studyTimer";
+
+    timer.innerText = "00:30";
+
+    /* STYLE */
+
+    timer.style.position = "absolute";
+
+    timer.style.top = "16px";
+
+    timer.style.left = "18px";
+
+    timer.style.background = "#ffffff";
+
+    timer.style.border = "1px solid #DADADA";
+
+    timer.style.borderRadius = "16px";
+
+    timer.style.padding = "8px 18px";
+
+    timer.style.fontSize = "18px";
+
+    timer.style.fontWeight = "600";
+
+    timer.style.color = "#3B455A";
+
+    timer.style.zIndex = "99999";
+
+    timer.style.boxShadow =
+      "0 2px 6px rgba(0,0,0,0.08)";
+
+    chatWindow.style.position = "relative";
+
+    chatWindow.appendChild(timer);
+
+    /* =========================
+       TIMER LOGIC
+    ========================== */
+
+    let totalTime = 30;
+
+    const countdown = setInterval(() => {
+
+      totalTime--;
+
+      const minutes = String(
+        Math.floor(totalTime / 60)
+      ).padStart(2, "0");
+
+      const seconds = String(
+        totalTime % 60
+      ).padStart(2, "0");
+
+      timer.innerText =
+        `${minutes}:${seconds}`;
+
+      /* =========================
+         END SESSION
+      ========================== */
+
+      if (totalTime <= 0) {
+
+        clearInterval(countdown);
+
+        /* HIDE CHAT */
+
+        chatWindow.innerHTML = `
+
+          <div style="
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            padding:40px;
+            text-align:center;
+            font-family:Arial;
+          ">
+
+            <h2 style="
+              margin-bottom:20px;
+              color:#3B455A;
+            ">
+              Thank you for the interaction.
+            </h2>
+
+            <p style="
+              font-size:18px;
+              color:#666;
+              max-width:600px;
+              line-height:1.6;
+            ">
+              We are now redirecting you back to the survey.
+              Please press the NEXT button in LimeSurvey
+              to continue the study.
+            </p>
+
+          </div>
+
+        `;
+
+        /* =========================
+           REDIRECT
+        ========================== */
+
+        setTimeout(() => {
+
+          const returnUrl =
+            localStorage.getItem(
+              "surveyReturnUrl"
+            );
+
+          if (returnUrl) {
+
+            window.location.href =
+              returnUrl;
+
+          }
+
+        }, 3000);
+
+      }
+
+    }, 1000);
 
   }
 
-}, 1000);
+});
+
+observer.observe(document.body, {
+
+  childList: true,
+  subtree: true
+
+});
 
 </script>
