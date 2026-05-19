@@ -41,12 +41,6 @@ console.log("Session ID:", sessionId);
 console.log("Condition:", condition);
 
 // ========================================
-// SAVE CURRENT SURVEY PAGE
-// ========================================
-
-localStorage.setItem("surveyReturnPage", window.location.href);
-
-// ========================================
 // CHATBOT
 // ========================================
 
@@ -89,7 +83,7 @@ setTimeout(() => {
   alert("Conversation time ended. Returning to survey.");
 
   // ========================================
-  // REDIRECT TO SURVEY PAGE
+  // REDIRECT TO LIMESURVEY
   // ========================================
 
   window.location.href =
