@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <title>Chatbot Study</title>
 
@@ -12,21 +12,26 @@
     body {
       margin: 0;
       padding: 0;
+      overflow: hidden;
       background: #F6F6F8;
       font-family: Arial, sans-serif;
-      overflow: hidden;
     }
 
     /* =========================
-       TIMER
+       TIMER INSIDE CHAT
     ========================== */
 
     #timer-box {
+
       position: fixed;
-      top: 18px;
-      left: 22px;
+
+      top: 24px;
+      left: 24px;
+
+      z-index: 999999;
 
       background: #E7E7EA;
+
       color: #3B455A;
 
       padding: 10px 18px;
@@ -36,27 +41,21 @@
       font-size: 18px;
       font-weight: 600;
 
-      z-index: 9999;
-
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
     }
 
   </style>
+
 </head>
 
 <body>
 
-  <!-- =========================
-       TIMER DISPLAY
-  ========================== -->
+  <!-- TIMER -->
 
   <div id="timer-box">
     00:30
   </div>
-
-  <!-- =========================
-       CHATBOT
-  ========================== -->
 
   <script type="module">
 
@@ -69,8 +68,11 @@
     let sessionId = localStorage.getItem("sessionId");
 
     if (!sessionId) {
+
       sessionId = crypto.randomUUID();
+
       localStorage.setItem("sessionId", sessionId);
+
     }
 
     // =========================
@@ -80,23 +82,28 @@
     let condition = localStorage.getItem("condition");
 
     if (!condition) {
+
       condition = Math.floor(Math.random() * 4) + 1;
+
       localStorage.setItem("condition", condition);
+
     }
 
-    console.log("Session ID:", sessionId);
-    console.log("Condition:", condition);
-
     // =========================
-    // SAVE CURRENT SURVEY PAGE
+    // SAVE SURVEY PAGE
     // =========================
 
     if (document.referrer.includes("survey.media.tuwien.ac.at")) {
-      localStorage.setItem("surveyReturnUrl", document.referrer);
+
+      localStorage.setItem(
+        "surveyReturnUrl",
+        document.referrer
+      );
+
     }
 
     // =========================
-    // INITIALIZE CHATBOT
+    // CHATBOT
     // =========================
 
     Chatbot.init({
@@ -105,8 +112,10 @@
         "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
 
       metadata: {
+
         sessionId: sessionId,
         condition: condition
+
       },
 
       theme: {
@@ -126,22 +135,18 @@
 
         chatWindow: {
 
-          welcomeMessage:
-            "Hello! Thank you for participating in this study.",
+          showTitle: false,
 
           width: 1100,
 
-          height: 680,
+          height: 620,
+
+          welcomeMessage:
+            "Hello! Thank you for participating in this study.",
 
           backgroundColor: "#FFFFFF",
 
-          textColor: "#2F3440",
-
           borderRadiusStyle: "rounded",
-
-          showTitle: false,
-
-          showAgentMessages: true,
 
           placeholder: "Type your message...",
 
@@ -150,13 +155,19 @@
           clearChatOnReload: false,
 
           botMessage: {
+
             backgroundColor: "#ECEAF4",
+
             textColor: "#2F3440"
+
           },
 
           userMessage: {
+
             backgroundColor: "#D8C3B5",
+
             textColor: "#2F3440"
+
           }
 
         }
@@ -171,34 +182,33 @@
 
     setTimeout(() => {
 
-      const chatButton = document.querySelector("button");
+      const buttons = document.querySelectorAll("button");
 
-      if (chatButton) {
-        chatButton.click();
-      }
+      buttons.forEach(btn => {
 
-    }, 1000);
+        if (
+          btn.innerHTML.includes("svg") ||
+          btn.textContent.trim() === ""
+        ) {
+
+          btn.click();
+
+        }
+
+      });
+
+    }, 800);
 
     // =========================
-    // REMOVE HEADER CONTROLS
+    // CLEAN UI
     // =========================
 
     const observer = new MutationObserver(() => {
 
-      // Remove minimize / close feel visually
+      // CHAT WINDOW
 
-      const header = document.querySelector('[class*="header"]');
-
-      if (header) {
-
-        header.style.background = "#FFFFFF";
-        header.style.borderBottom = "1px solid #EAEAEA";
-
-      }
-
-      // Main container styling
-
-      const chatWindow = document.querySelector('[class*="chat-window"]');
+      const chatWindow =
+        document.querySelector('[class*="chat-window"]');
 
       if (chatWindow) {
 
@@ -207,13 +217,46 @@
         chatWindow.style.boxShadow =
           "0 8px 30px rgba(0,0,0,0.08)";
 
+        chatWindow.style.overflow = "hidden";
+
+      }
+
+      // HEADER
+
+      const header =
+        document.querySelector('[class*="header"]');
+
+      if (header) {
+
+        header.style.height = "70px";
+
+        header.style.background = "#FFFFFF";
+
+        header.style.borderBottom =
+          "1px solid #ECECEC";
+
+      }
+
+      // INPUT AREA
+
+      const textarea =
+        document.querySelector("textarea");
+
+      if (textarea) {
+
+        textarea.style.height = "52px";
+
+        textarea.style.fontSize = "18px";
+
       }
 
     });
 
     observer.observe(document.body, {
+
       childList: true,
       subtree: true
+
     });
 
     // =========================
@@ -222,7 +265,8 @@
 
     let totalTime = 30;
 
-    const timerDisplay = document.getElementById("timer-box");
+    const timerDisplay =
+      document.getElementById("timer-box");
 
     const timer = setInterval(() => {
 
@@ -236,10 +280,11 @@
         totalTime % 60
       ).padStart(2, "0");
 
-      timerDisplay.innerText = `${minutes}:${seconds}`;
+      timerDisplay.innerText =
+        `${minutes}:${seconds}`;
 
       // =========================
-      // END SESSION
+      // REDIRECT
       // =========================
 
       if (totalTime <= 0) {
@@ -247,14 +292,16 @@
         clearInterval(timer);
 
         alert(
-          "The conversation time is complete. Please click NEXT in the survey to continue."
+          "Conversation time completed. Please press NEXT in the survey to continue."
         );
 
         const returnUrl =
           localStorage.getItem("surveyReturnUrl");
 
         if (returnUrl) {
+
           window.location.href = returnUrl;
+
         }
 
       }
