@@ -1,315 +1,299 @@
-<!DOCTYPE html>
-<html lang="en">
+<script type="module" defer>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
 
-  <title>Chatbot Study</title>
+/* =========================
+   SESSION ID
+========================= */
 
-  <style>
+let sessionId = localStorage.getItem("sessionId");
 
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: #F6F6F8;
-      font-family: Arial, sans-serif;
-    }
+if (!sessionId) {
 
-    /* =========================
-       TIMER INSIDE CHAT
-    ========================== */
+  sessionId = crypto.randomUUID();
 
-    #timer-box {
+  localStorage.setItem("sessionId", sessionId);
 
-      position: fixed;
+}
 
-      top: 24px;
-      left: 24px;
+/* =========================
+   CONDITION
+========================= */
 
-      z-index: 999999;
+let condition = localStorage.getItem("condition");
 
-      background: #E7E7EA;
+if (!condition) {
 
-      color: #3B455A;
+  condition = Math.floor(Math.random() * 4) + 1;
 
-      padding: 10px 18px;
+  localStorage.setItem("condition", condition);
 
-      border-radius: 18px;
+}
 
-      font-size: 18px;
-      font-weight: 600;
+/* =========================
+   SAVE SURVEY PAGE URL
+========================= */
 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+if (
+  document.referrer.includes("survey.media.tuwien.ac.at")
+) {
 
-    }
+  localStorage.setItem(
+    "surveyReturnUrl",
+    document.referrer
+  );
 
-  </style>
+}
 
-</head>
+/* =========================
+   TIMER ELEMENT
+========================= */
 
-<body>
+const timerBox = document.createElement("div");
 
-  <!-- TIMER -->
+timerBox.id = "studyTimer";
 
-  <div id="timer-box">
-    00:30
-  </div>
+timerBox.innerText = "00:30";
 
-  <script type="module">
+document.body.appendChild(timerBox);
 
-    import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
+/* =========================
+   TIMER STYLE
+========================= */
 
-    // =========================
-    // SESSION ID
-    // =========================
+const style = document.createElement("style");
 
-    let sessionId = localStorage.getItem("sessionId");
+style.innerHTML = `
 
-    if (!sessionId) {
+#studyTimer {
 
-      sessionId = crypto.randomUUID();
+  position: fixed;
 
-      localStorage.setItem("sessionId", sessionId);
+  top: 88px;
+  left: 290px;
 
-    }
+  z-index: 999999;
 
-    // =========================
-    // CONDITION
-    // =========================
+  background: #ffffff;
 
-    let condition = localStorage.getItem("condition");
+  color: #3B455A;
 
-    if (!condition) {
+  padding: 10px 20px;
 
-      condition = Math.floor(Math.random() * 4) + 1;
+  border-radius: 16px;
 
-      localStorage.setItem("condition", condition);
+  font-size: 18px;
+  font-weight: 600;
 
-    }
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 
-    // =========================
-    // SAVE SURVEY PAGE
-    // =========================
+  border: 1px solid #EAEAEA;
 
-    if (document.referrer.includes("survey.media.tuwien.ac.at")) {
+}
 
-      localStorage.setItem(
-        "surveyReturnUrl",
-        document.referrer
-      );
+`;
 
-    }
+document.head.appendChild(style);
 
-    // =========================
-    // CHATBOT
-    // =========================
+/* =========================
+   CHATBOT
+========================= */
 
-    Chatbot.init({
+Chatbot.init({
 
-      n8nChatUrl:
-        "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
+  n8nChatUrl:
+    "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
 
-      metadata: {
+  metadata: {
 
-        sessionId: sessionId,
-        condition: condition
+    sessionId: sessionId,
+    condition: condition
+
+  },
+
+  theme: {
+
+    button: {
+
+      backgroundColor: "#b0b0b0",
+
+      right: 251,
+      bottom: 35,
+
+      size: 50,
+
+      iconColor: "#373434",
+
+      customIconSrc:
+        "https://www.svgrepo.com/show/362552/chat-centered-dots-bold.svg",
+
+      customIconSize: 68,
+
+      customIconBorderRadius: 21,
+
+      autoWindowOpen: {
+
+        autoOpen: true,
+        openDelay: 1
 
       },
 
-      theme: {
+      borderRadius: "rounded",
 
-        button: {
+      draggable: false
 
-          backgroundColor: "#3B455A",
+    },
 
-          iconColor: "#FFFFFF",
+    tooltip: {
 
-          size: 70,
+      showTooltip: false
 
-          right: 20,
-          bottom: 20
+    },
 
-        },
+    allowProgrammaticMessage: false,
 
-        chatWindow: {
+    chatWindow: {
 
-          showTitle: false,
+      borderRadiusStyle: "rounded",
 
-          width: 1100,
+      avatarBorderRadius: 25,
 
-          height: 620,
+      messageBorderRadius: 6,
 
-          welcomeMessage:
-            "Hello! Thank you for participating in this study.",
+      showTitle: false,
 
-          backgroundColor: "#FFFFFF",
+      title: "N8N Chat UI Bot",
 
-          borderRadiusStyle: "rounded",
+      titleAvatarSrc:
+        "https://www.svgrepo.com/show/362552/chat-centered-dots-bold.svg",
 
-          placeholder: "Type your message...",
+      avatarSize: 40,
 
-          starterPrompts: [],
+      welcomeMessage:
+        "Hello! Thank you for participating in this study.",
 
-          clearChatOnReload: false,
+      errorMessage:
+        "Please connect me to n8n first",
 
-          botMessage: {
+      backgroundColor: "#ffffff",
 
-            backgroundColor: "#ECEAF4",
+      height: 550,
 
-            textColor: "#2F3440"
+      width: 1000,
 
-          },
+      fontSize: 20,
 
-          userMessage: {
+      starterPromptFontSize: 15,
 
-            backgroundColor: "#D8C3B5",
+      renderHTML: false,
 
-            textColor: "#2F3440"
+      clearChatOnReload: false,
 
-          }
+      showScrollbar: false,
 
-        }
+      botMessage: {
 
-      }
+        backgroundColor: "#ECEAF4",
 
-    });
+        textColor: "#2F3440",
 
-    // =========================
-    // AUTO OPEN CHAT
-    // =========================
+        showAvatar: true,
 
-    setTimeout(() => {
+        avatarSrc:
+          "https://www.svgrepo.com/show/334455/bot.svg",
 
-      const buttons = document.querySelectorAll("button");
+        showCopyToClipboardIcon: false
 
-      buttons.forEach(btn => {
+      },
 
-        if (
-          btn.innerHTML.includes("svg") ||
-          btn.textContent.trim() === ""
-        ) {
+      userMessage: {
 
-          btn.click();
+        backgroundColor: "#D8C3B5",
 
-        }
+        textColor: "#2F3440",
 
-      });
+        showAvatar: true,
 
-    }, 800);
+        avatarSrc:
+          "https://www.svgrepo.com/show/532363/user-alt-1.svg"
 
-    // =========================
-    // CLEAN UI
-    // =========================
+      },
 
-    const observer = new MutationObserver(() => {
+      textInput: {
 
-      // CHAT WINDOW
+        placeholder: "Type your message....",
 
-      const chatWindow =
-        document.querySelector('[class*="chat-window"]');
+        backgroundColor: "#ffffff",
 
-      if (chatWindow) {
+        textColor: "#1e1e1f",
 
-        chatWindow.style.borderRadius = "32px";
+        sendButtonColor: "#030303",
 
-        chatWindow.style.boxShadow =
-          "0 8px 30px rgba(0,0,0,0.08)";
+        maxChars: 100,
 
-        chatWindow.style.overflow = "hidden";
+        maxCharsWarningMessage:
+          "You exceeded the characters limit.",
 
-      }
+        autoFocus: false,
 
-      // HEADER
+        enableInputHistory: true,
 
-      const header =
-        document.querySelector('[class*="header"]');
+        borderRadius: 6,
 
-      if (header) {
-
-        header.style.height = "70px";
-
-        header.style.background = "#FFFFFF";
-
-        header.style.borderBottom =
-          "1px solid #ECECEC";
+        sendButtonBorderRadius: 50
 
       }
 
-      // INPUT AREA
+    }
 
-      const textarea =
-        document.querySelector("textarea");
+  }
 
-      if (textarea) {
+});
 
-        textarea.style.height = "52px";
+/* =========================
+   TIMER LOGIC
+========================= */
 
-        textarea.style.fontSize = "18px";
+let totalTime = 30;
 
-      }
+const timer = setInterval(() => {
 
-    });
+  totalTime--;
 
-    observer.observe(document.body, {
+  const minutes = String(
+    Math.floor(totalTime / 60)
+  ).padStart(2, "0");
 
-      childList: true,
-      subtree: true
+  const seconds = String(
+    totalTime % 60
+  ).padStart(2, "0");
 
-    });
+  timerBox.innerText =
+    `${minutes}:${seconds}`;
 
-    // =========================
-    // TIMER
-    // =========================
+  /* =========================
+     REDIRECT
+  ========================= */
 
-    let totalTime = 30;
+  if (totalTime <= 0) {
 
-    const timerDisplay =
-      document.getElementById("timer-box");
+    clearInterval(timer);
 
-    const timer = setInterval(() => {
+    alert(
+      "Conversation time completed. Please click NEXT in the survey to continue."
+    );
 
-      totalTime--;
+    const returnUrl =
+      localStorage.getItem("surveyReturnUrl");
 
-      const minutes = String(
-        Math.floor(totalTime / 60)
-      ).padStart(2, "0");
+    if (returnUrl) {
 
-      const seconds = String(
-        totalTime % 60
-      ).padStart(2, "0");
+      window.location.href = returnUrl;
 
-      timerDisplay.innerText =
-        `${minutes}:${seconds}`;
+    }
 
-      // =========================
-      // REDIRECT
-      // =========================
+  }
 
-      if (totalTime <= 0) {
+}, 1000);
 
-        clearInterval(timer);
-
-        alert(
-          "Conversation time completed. Please press NEXT in the survey to continue."
-        );
-
-        const returnUrl =
-          localStorage.getItem("surveyReturnUrl");
-
-        if (returnUrl) {
-
-          window.location.href = returnUrl;
-
-        }
-
-      }
-
-    }, 1000);
-
-  </script>
-
-</body>
-
-</html>
+</script>
