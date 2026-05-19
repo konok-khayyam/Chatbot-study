@@ -2,22 +2,78 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Chatbot Study</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .timer-box {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      background: #1f3147;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 9999;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    .redirect-message {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10000;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .redirect-message h2 {
+      color: #1f3147;
+      margin-bottom: 10px;
+    }
+
+    .redirect-message p {
+      color: #444;
+      font-size: 18px;
+    }
+
+  </style>
 </head>
 
 <body>
 
-<h1>Chatbot Test Page</h1>
+<div class="timer-box" id="timer">
+  00:30
+</div>
+
+<div class="redirect-message" id="redirectScreen">
+  <h2>Conversation Time Finished</h2>
+  <p>Redirecting you back to the survey...</p>
+</div>
 
 <script type="module">
 
 import Chatbot from "https://cdn.n8nchatui.com/v1/embed.js";
 
-// =========================
+// ========================================
 // SESSION ID
-// =========================
+// ========================================
 
 let sessionId = localStorage.getItem("sessionId");
 
@@ -26,9 +82,9 @@ if (!sessionId) {
   localStorage.setItem("sessionId", sessionId);
 }
 
-// =========================
+// ========================================
 // CONDITION
-// =========================
+// ========================================
 
 let condition = localStorage.getItem("condition");
 
@@ -40,13 +96,22 @@ if (!condition) {
 console.log("Session ID:", sessionId);
 console.log("Condition:", condition);
 
-// =========================
+// ========================================
+// SAVE REFERRER URL
+// ========================================
+
+const returnUrl = document.referrer;
+
+console.log("Return URL:", returnUrl);
+
+// ========================================
 // CHATBOT
-// =========================
+// ========================================
 
 Chatbot.init({
 
-  n8nChatUrl: "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
+  n8nChatUrl:
+    "https://n8n.media.tuwien.ac.at/webhook/553640ac-4edf-461a-aa03-916374ecae33",
 
   metadata: {
     sessionId: sessionId,
@@ -57,20 +122,66 @@ Chatbot.init({
 
     button: {
       backgroundColor: "#ffb59e",
-      right: 20,
-      bottom: 20,
-      size: 50
+      right: "50%",
+      bottom: "50%",
+      size: 70
     },
 
     chatWindow: {
-      welcomeMessage: "Hello! Chatbot loaded successfully.",
-      height: 600,
-      width: 400
+      welcomeMessage:
+        "Hello! Thank you for participating in this study.",
+
+      height: 700,
+      width: 1200
     }
 
   }
 
 });
+
+// ========================================
+// TIMER
+// ========================================
+
+let totalSeconds = 30;
+
+const timerElement = document.getElementById("timer");
+
+const countdown = setInterval(() => {
+
+  totalSeconds--;
+
+  let minutes = Math.floor(totalSeconds / 60);
+  let seconds = totalSeconds % 60;
+
+  minutes = String(minutes).padStart(2, "0");
+  seconds = String(seconds).padStart(2, "0");
+
+  timerElement.innerText = `${minutes}:${seconds}`;
+
+  if (totalSeconds <= 0) {
+
+    clearInterval(countdown);
+
+    document.getElementById("redirectScreen").style.display = "flex";
+
+    setTimeout(() => {
+
+      if (returnUrl && returnUrl !== "") {
+
+        window.location.href = returnUrl;
+
+      } else {
+
+        alert("Could not return automatically. Please go back to the survey manually.");
+
+      }
+
+    }, 2000);
+
+  }
+
+}, 1000);
 
 </script>
 
