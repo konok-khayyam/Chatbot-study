@@ -4,85 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Chatbot Study</title>
-
-  <style>
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      font-family: Arial, sans-serif;
-    }
-
-    /* =========================
-       TIMER
-    ========================= */
-
-    .timer-box {
-      position: fixed;
-      top: 15px;
-      right: 20px;
-      background: #1f3147;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 18px;
-      font-weight: bold;
-      z-index: 9999;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    }
-
-    /* =========================
-       END SCREEN
-    ========================= */
-
-    .end-screen {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,255,255,0.96);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 10000;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .end-screen h2 {
-      color: #1f3147;
-      margin-bottom: 10px;
-      font-size: 32px;
-    }
-
-    .end-screen p {
-      color: #444;
-      font-size: 18px;
-    }
-
-  </style>
 </head>
 
 <body>
 
-<!-- =========================
-     TIMER DISPLAY
-========================= -->
-
-<div class="timer-box" id="timer">
-  00:30
-</div>
-
-<!-- =========================
-     END SCREEN
-========================= -->
-
-<div class="end-screen" id="endScreen">
-  <h2>Conversation Finished</h2>
-  <p>Redirecting you back to the survey...</p>
-</div>
+<h1>Chatbot Test Page</h1>
 
 <script type="module">
 
@@ -100,7 +27,7 @@ if (!sessionId) {
 }
 
 // ========================================
-// CONDITION
+// RANDOM CONDITION
 // ========================================
 
 let condition = localStorage.getItem("condition");
@@ -114,7 +41,13 @@ console.log("Session ID:", sessionId);
 console.log("Condition:", condition);
 
 // ========================================
-// CHATBOT UI
+// SAVE CURRENT SURVEY PAGE
+// ========================================
+
+localStorage.setItem("surveyReturnPage", window.location.href);
+
+// ========================================
+// CHATBOT
 // ========================================
 
 Chatbot.init({
@@ -131,20 +64,15 @@ Chatbot.init({
 
     button: {
       backgroundColor: "#ffb59e",
-
-      // centered floating button
-      right: "50%",
-      bottom: "50%",
-
-      size: 70
+      right: 20,
+      bottom: 20,
+      size: 50
     },
 
     chatWindow: {
-
       welcomeMessage:
         "Hello! Thank you for participating in this study.",
-
-      height: 700,
+      height: 650,
       width: 1200
     }
 
@@ -153,51 +81,21 @@ Chatbot.init({
 });
 
 // ========================================
-// TIMER
+// 30 SECOND TIMER TEST
 // ========================================
 
-// TEST TIMER = 30 SECONDS
-// Change later to:
-// 180 for 3 minutes
+setTimeout(() => {
 
-let totalSeconds = 30;
-
-const timerElement = document.getElementById("timer");
-
-const countdown = setInterval(() => {
-
-  totalSeconds--;
-
-  let minutes = Math.floor(totalSeconds / 60);
-  let seconds = totalSeconds % 60;
-
-  minutes = String(minutes).padStart(2, "0");
-  seconds = String(seconds).padStart(2, "0");
-
-  timerElement.innerText = `${minutes}:${seconds}`;
+  alert("Conversation time ended. Returning to survey.");
 
   // ========================================
-  // TIMER FINISHED
+  // REDIRECT TO SURVEY PAGE
   // ========================================
 
-  if (totalSeconds <= 0) {
+  window.location.href =
+    "https://survey.media.tuwien.ac.at/index.php/718311?lang=en";
 
-    clearInterval(countdown);
-
-    // show end screen
-    document.getElementById("endScreen").style.display = "flex";
-
-    // wait 2 sec then return to survey
-    setTimeout(() => {
-
-      // return to previous page
-      window.history.back();
-
-    }, 2000);
-
-  }
-
-}, 1000);
+}, 30000);
 
 </script>
 
